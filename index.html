@@ -167,10 +167,9 @@ document.getElementById("year").textContent=new Date().getFullYear();
 document.querySelectorAll(".plan-btn").forEach(btn=>btn.addEventListener("click",()=>{document.getElementById("message").value="I am interested in the "+btn.dataset.plan+". Please share more details."}));
 document.querySelectorAll("[data-project]").forEach(btn=>btn.addEventListener("click",()=>{document.getElementById("message").value="I would like to discuss a "+btn.dataset.project+" project."}));
 
-document.getElementById("contactForm").addEventListener("submit", async (e) => {
+document.getElementById("contactForm").addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const form = e.currentTarget;
   const box = document.getElementById("formMessage");
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
@@ -183,32 +182,17 @@ document.getElementById("contactForm").addEventListener("submit", async (e) => {
     return;
   }
 
-  box.textContent = "Saving your enquiry...";
+  const enquiry = [
+    "Website Enquiry",
+    "Name: " + name,
+    "Email: " + email,
+    "Service: " + service,
+    "Project details: " + message
+  ].join("\n");
+
+  box.textContent = "Opening WhatsApp with your enquiry...";
   box.classList.add("show");
-
-  try {
-    const response = await fetch("/api/enquiries", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({name, email, service, message})
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.error || "Submission failed");
-    }
-
-    box.textContent = "Thank you, " + name + "! Your enquiry has been saved successfully.";
-    box.classList.add("show");
-    form.reset();
-
-    setTimeout(() => box.classList.remove("show"), 6000);
-  } catch (error) {
-    console.error("Enquiry error:", error);
-    box.textContent = "Could not save your enquiry. Make sure the Node.js server is running.";
-    box.classList.add("show");
-  }
+  window.location.assign("https://wa.me/918506077343?text=" + encodeURIComponent(enquiry));
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){navLinks.classList.remove("show");menuBtn.textContent="☰";document.body.classList.remove("no-scroll")}});
 </script>
